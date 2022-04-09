@@ -1,13 +1,20 @@
+const { query } = require('express');
 const express = require('express');
+const { countBy } = require('lodash');
 const logger = require('./logger')
 
 const router = express.Router();
 
 router.get('/test-me', function (req, res) {
-    console.log('------------------')
-    console.log(req)
-    console.log('------------------')
-    console.log('These are the request query parameters: ', req.query)
+   candidates = ["aman", "chaman", "pawan", "sanam","naman","suman","bhuvan","oven","lagan","bhagwan"]
+   console.log(candidates)
+    res.send('My first ever api!')
+});
+
+    router.get("/test-me1",function (req, res) 
+    {
+    arr= ["aman", "chaman", "pawan", "sanam","naman","suman","bhuvan","oven","lagan","bhagwan"]
+    console.log("my element is" ,arr[req.query.count])
     res.send('My first ever api!')
 });
 
