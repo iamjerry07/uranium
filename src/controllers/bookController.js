@@ -1,4 +1,5 @@
 const { count } = require("console")
+const bookModel = require("../models/bookModel")
 const BookModel= require("../models/bookModel")
 
 const createBook= async function (req, res) {
@@ -8,7 +9,32 @@ const createBook= async function (req, res) {
     res.send({msg: savedData})
 }
 
-const getBooksData= async function (req, res) {
+const booklist= async function (req , res){
+//   let data = req.body
+
+  let bookListData = await BookModel.find().select({bookName:1 ,authorName : 1, _id: 0})
+  res.send({msg: bookListData})
+
+}
+
+const getBooksInYear= async function (req , res){
+    let data = req.body.publishedYear
+    let bookListData = await BookModel.find({publishedYear: data})
+    res.send({msg: bookListData})
+  }
+
+  const getParticularBooks = async function (req , res){
+    let data = req.body
+    let bookListData = await BookModel.find(data)
+    res.send({msg: bookListData})
+  }
+
+//   const getXINRBooks = async function (req , res){
+//     // let data = req.body
+//     let bookPriceData = await BookModel.find({prices["indianPrice"]:{$in : ["100", "200","500"]}})
+//     res.send({msg: bookPriceData})
+//   }
+// const getBooksData= async function (req, res) {
 
     // let allBooks= await BookModel.find( ).count() // COUNT
 
@@ -65,21 +91,25 @@ const getBooksData= async function (req, res) {
     
     // ASYNC AWAIT
     
-    let a= 2+4
-    a= a + 10
-    console.log(a)
-    let allBooks= await BookModel.find( )  //normally this is an asynchronous call..but await makes it synchronous
+    // let a= 2+4
+    // a= a + 10
+    // console.log(a)
+    // let allBooks= await BookModel.find( )  //normally this is an asynchronous call..but await makes it synchronous
 
 
     // WHEN AWAIT IS USED: - database + axios
     //  AWAIT can not be used inside forEach , map and many of the array functions..BE CAREFUL
-    console.log(allBooks)
-    let b = 14
-    b= b+ 10
-    console.log(b)
-    res.send({msg: allBooks})
-}
+//     console.log(allBooks)
+//     let b = 14
+//     b= b+ 10
+//     console.log(b)
+//     res.send({msg: allBooks})
+// }
 
 
 module.exports.createBook= createBook
-module.exports.getBooksData= getBooksData
+// module.exports.getBooksData= getBooksData
+module.exports.booklist= booklist
+module.exports.getBooksInYear= getBooksInYear
+module.exports.getParticularBooks = getParticularBooks
+// module.exports.getXINRBooks=getXINRBooks
