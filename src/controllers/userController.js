@@ -1,6 +1,10 @@
 const UserModel= require("../models/userModel")
 
 
+const testme= async function(req, res) {
+    
+    res.send({ msg: "This is coming from controller (handler)"})
+    }
 
 
 const basicCode= async function(req, res) {
@@ -44,3 +48,4 @@ const getUsersData= async function (req, res) {
 module.exports.createUser= createUser
 module.exports.getUsersData= getUsersData
 module.exports.basicCode= basicCode
+module.exports.testme=testme
