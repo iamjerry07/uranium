@@ -1,60 +1,48 @@
 const express = require('express');
 const router = express.Router();
-// const UserModel= require("../models/userModel.js")
-const UserController= require("../controllers/userController")
-const BookController= require("../controllers/bookController")
-const commonMW = require ("../middlewares/commonMiddlewares")
-
-router.get("/MWcheck", function (req,res){
-res.send("My Universal Api")})
-
+ const userModel= require("../models/userModel.js")
+const userController= require("../controllers/userController")
+const Bookcontroller= require("../controllers/bookController")
+const productController = require("../controllers/productcontroller")
+const orderController= require("../controllers/ordercontroller")
+const Middleware= require("../middleware/middleware")
 router.get("/test-me", function (req, res) {
     res.send("My first ever api!")
 })
 
-router.post("/createBook", BookController.createBook  )
+//router.post("/createUser",Middleware.middleware1, userController.createUser  )
+router.post("/createUser",Middleware.isFreeAppUserMiddleware,userController.createUser  )
 
+router.get("/getUsersData", userController.getUsersData)
+router.post("/createProduct",productController.createProduct)
+//router.post("/createOrder", Middleware.middleware1,orderController.createOrder)
+router.post("/createOrder",Middleware.isFreeAppUserMiddleware, orderController.createOrder  )
+router.get("/getOrderData", orderController.getOrderData)
 
-// router.post("/createUser", UserController.createUser  )
-// router.get("/getUsersData", UserController.getUsersData)
+//router.post("/createBook", BookController.createBook  )
 
+//router.get("/getBooksData", BookController.getBooksData)
 
-// const mid1= function ( req, res, next) {
-//     console.log("Hi I am a middleware named Mid1")
-//     // logic
-//     let loggedIn = false
+//router.post("/updateBooks", BookController.updateBooks)
+//router.post("/deleteBooks", BookController.deleteBooks)
 
-//     if (loggedIn== true) { 
-//         console.log( "OK LOGGED IS IS TRUE NOW")
-//         next ()
-//     }
-//     else {
-//         res.send ("Please login or register")
-//     }
-// }
+//MOMENT JS
+const moment = require('moment');
+router.get("/dateManipulations", function (req, res) {
+    
+    // const today = moment();
+    // let x= today.add(10, "days")
 
-// // e.g. restricted and open-to-all API's can be handled like below now:
-// router.get('/homePage', mid1, UserController.feeds)
-// router.get('/profileDetails', mid1, UserController.profileDetails)
-// router.get('/friendList', mid1, UserController.friendList)
-// router.get('/changePassword', mid1, UserController.changePassword)
+    // let validOrNot= moment("29-02-1991", "DD-MM-YYYY").isValid()
+    // console.log(validOrNot)
+    
+    const dateA = moment('01-01-1900', 'DD-MM-YYYY');
+    const dateB = moment('01-01-2000', 'DD-MM-YYYY');
 
-// router.get('/termsAndConditions',  UserController.termsAndConditions)
-// router.get('/register',  UserController.register)
+    let x= dateB.diff(dateA, "days")
+    console.log(x)
 
-
-
-
-
-router.get("/basicRoute", commonMW.mid1, commonMW.mid2, commonMW.mid3, commonMW.mid4, UserController.basicCode)
-
-
-
-// router.get("/basicRoute2", commonMW.mid1, UserController.basicCode2)
-// router.get("/basicRoute3", commonMW.mid2, UserController.basicCode3)
-// router.get("/basicRoute4", commonMW.mid1, commonMW.mid4, UserController.basicCode4)
-
-
-
+    res.send({ msg: "all good"})
+})
 
 module.exports = router;

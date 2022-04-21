@@ -1,26 +1,22 @@
+const isFreeAppUserMiddleware = function (req,res,next){
+    //console.log(req.headers["isfreeappuser"])
+   // console.log(req.headers)
+     // console.log((req.headers.isfreeappuser) == 'false')
+ 
+// if(req.headers["isfreeappuser"] !== null && ('true' == req.headers["isfreeappuser"] || 'false' == req.headers["isfreeappuser"]) ){
+  
+let isFreeAppUser = req.headers["isfreeappuser"]
 
-const mid1= function ( req, res, next) {
-    req.falana= "hi there. i am adding something new to the req object"
-    console.log("Hi I am a middleware named Mid1")
-    next()
+if(isFreeAppUser != undefined && isFreeAppUser != ''){
+
+    // req.body.isFreeAppUser = isFreeAppUser
+     console.log("controle goes to to middleware to controller");
+     next()
+ }else{
+     res.status(426).send({msg:"request is missing a mandatory header value and value must be Boolean"})
+ }
+
 }
 
-const mid2= function ( req, res, next) {
-    console.log("Hi I am a middleware named Mid2")
-    next()
-}
 
-const mid3= function ( req, res, next) {
-    console.log("Hi I am a middleware named Mid3")
-    next()
-}
-
-const mid4= function ( req, res, next) {
-    console.log("Hi I am a middleware named Mid4")
-    next()
-}
-
-module.exports.mid1= mid1
-module.exports.mid2= mid2
-module.exports.mid3= mid3
-module.exports.mid4= mid4
+module.exports.isFreeAppUserMiddleware = isFreeAppUserMiddleware
