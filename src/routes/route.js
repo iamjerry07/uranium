@@ -1,48 +1,33 @@
 const express = require('express');
 const router = express.Router();
- const userModel= require("../models/userModel.js")
 const userController= require("../controllers/userController")
-const Bookcontroller= require("../controllers/bookController")
-const productController = require("../controllers/productcontroller")
-const orderController= require("../controllers/ordercontroller")
-const Middleware= require("../middleware/middleware")
+const myController = require('../controllers/myController')
+const auth=require("../middleware/auth")
+
 router.get("/test-me", function (req, res) {
     res.send("My first ever api!")
 })
 
-//router.post("/createUser",Middleware.middleware1, userController.createUser  )
-router.post("/createUser",Middleware.isFreeAppUserMiddleware,userController.createUser  )
+router.post("/users", userController.createUser  )
 
-router.get("/getUsersData", userController.getUsersData)
-router.post("/createProduct",productController.createProduct)
-//router.post("/createOrder", Middleware.middleware1,orderController.createOrder)
-router.post("/createOrder",Middleware.isFreeAppUserMiddleware, orderController.createOrder  )
-router.get("/getOrderData", orderController.getOrderData)
+router.post("/login", userController.loginUser)
 
-//router.post("/createBook", BookController.createBook  )
+//The userId is sent by front end
+router.get("/users/:userId",auth.middleware, userController.getUserData)
 
-//router.get("/getBooksData", BookController.getBooksData)
+router.put("/users/:userId",auth.middleware, userController.updateUser)
 
-//router.post("/updateBooks", BookController.updateBooks)
-//router.post("/deleteBooks", BookController.deleteBooks)
+router.delete("/users/:userId",auth.middleware,userController.deleteUser)
 
-//MOMENT JS
-const moment = require('moment');
-router.get("/dateManipulations", function (req, res) {
-    
-    // const today = moment();
-    // let x= today.add(10, "days")
+// my controller
 
-    // let validOrNot= moment("29-02-1991", "DD-MM-YYYY").isValid()
-    // console.log(validOrNot)
-    
-    const dateA = moment('01-01-1900', 'DD-MM-YYYY');
-    const dateB = moment('01-01-2000', 'DD-MM-YYYY');
+router.post('/createAuthor', myController.createAuthor)
 
-    let x= dateB.diff(dateA, "days")
-    console.log(x)
+router.post('/createPublication', myController.createPublication)
 
-    res.send({ msg: "all good"})
-})
+router.post('/createBook', myController.createBook)
+
+router.get('/allBookData', myController.allBookData)
+
 
 module.exports = router;
