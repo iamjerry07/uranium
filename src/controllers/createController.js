@@ -15,10 +15,9 @@ const createAuthor=async function(req,res){
         res.status(400).send({msg:error.message})
     }
 }
-//asdnasndkjasnjanfkladalfklamfaklsmklaklanf-karan
-//dsdffdfdf-karan
 
-//2.
+
+//3.
 
 
 module.exports.createAuthor=createAuthor;
