@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const CowinController= require("../controllers/cowinController")
+const CowinController= require("../controllers/fxnUpCowinController")
 const cowincontroller=require("../controllers/Cowincontrollers")
 const weathermapController=require("../controllers/weathermapController")
 const memeCOntroller=require("../controllers/memeController")
