@@ -1,4 +1,5 @@
-const emailValidator=require("email-validator")
+const emailValidator=require("email-validator");
+const { find } = require("../models/authorModel");
 const authorModel=require("../models/authorModel");
 const blogModel=require('../models/blogModel')
 
@@ -34,3 +35,26 @@ catch(error){
 
 module.exports.createAuthor=createAuthor;
 module.exports.createBlog=createBlog;
+
+//3.
+const deleteBlog = async function(req, res) {    
+   
+   try{
+          let Blogid=req.params
+           
+          if(!(await blogModel.findOne({blogs_id:Blogid}))) {
+            return res.status(200).send({status: false, message: "no such user exists"})
+        }   
+            let deletedata= await blogModel.findOneAndUpdate({blogs_id:Blogid},{$set:{isDeleted:true}},{$new:true})
+            res.send({msg:deletedata})
+      
+       }
+     catch(error){
+        res.status(200).send({msg:error.message})
+     }
+   
+      
+}
+
+module.exports.createAuthor=createAuthor;
+module.exports.deleteBlog=deleteBlog;
