@@ -1,3 +1,4 @@
+const { Timestamp } = require("bson");
 const mongoose = require("mongoose");
 
 const authorSchema = new mongoose.Schema({
@@ -23,6 +24,7 @@ const authorSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-})
+    
+},{timestamps:true})
 
 module.exports = mongoose.model("Author", authorSchema);
