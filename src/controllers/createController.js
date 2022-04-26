@@ -15,8 +15,7 @@ const createAuthor=async function(req,res){
         res.status(400).send({msg:error.message})
     }
 }
-//ttyshdajjsakkak---Raj
-
 //2.
+
 
 module.exports.createAuthor=createAuthor;
