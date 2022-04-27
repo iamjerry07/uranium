@@ -42,14 +42,10 @@ const getBlog = async function (req, res) {
         let category = req.query.category
         let tag = req.query.tags
         let subcategory = req.query.subcategory
-        
-        
-        let getData = await blogModel.find({ isDeleted: false, isPublished: true, $or: [{ authorId: authorId },{ category: category }, { tags: tag }, { subcategory: subcategory }] })
-
-        if(!(authorId || category || tag ||subcategory))
-        getData = await blogModel.find({ isDeleted: false, isPublished: true})
-        
-        if (getData.length===0)
+        let getData = await blogModel.find({ isDeleted: false, isPublished: true, $or: [{ authorId: authorId }, { category: category }, { tags: tag }, { subcategory: subcategory }] }).collation({ locale: "en", strength: 2 })
+        if (!(authorId || category || tag || subcategory))
+            getData = await blogModel.find({ isDeleted: false, isPublished: true })
+        if (getData.length === 0)
             return res.status(404).send({ status: false, msg: "Blogs not present" })
         res.status(200).send({ status: true, msg: getData })
     }
@@ -59,23 +55,21 @@ const getBlog = async function (req, res) {
 }
 
 //4.  update by title, body, adding tags, adding a subcategory
-const updateData = async function(req,res){
-    try{
-        let isPublished=req.body.isPublished
-        let Id= req.params.blogId
-       let title = req.body.title
-       let category= req.body.category
-       let tags=req.body.tags
-       let subcategory= req.body.subcategory
-       let blogId= await blogModel.findById(Id)
-       if(!blogId.isDeleted==true)
-       {
-           return res.status(404).send({ status: false, msg: "Blogs is Deleted" })
-       }
-       let getData = await blogModel.findOneAndUpdate({_id:Id},{$set: { title: title , category: category ,  tags: tags , subcategory: subcategory,isPublished:true,publishedAt:new Date()}},{multi:true,new:true,upsert:true})
-       if (getData.length===0)
+const updateData = async function (req, res) {
+    try {
+        let Id = req.params.blogId
+        let title = req.body.title
+        let category = req.body.category
+        let tags = req.body.tags
+        let subcategory = req.body.subcategory
+        let blogId = await blogModel.findById(Id)
+        if (!blogId.isDeleted == true) {
+            return res.status(404).send({ status: false, msg: "Blogs is Deleted" })
+        }
+        let getData = await blogModel.findOneAndUpdate({ _id: Id }, { $set: { title: title, category: category, tags: tags, subcategory: subcategory, isPublished: true, publishedAt: new Date() } }, { multi: true, new: true, upsert: true }).collation({ locale: "en", strength: 2 })
+        if (getData.length === 0)
             return res.status(404).send({ status: false, msg: "Blogs not present" })
-            res.status(200).send({ status: true, msg: getData })
+        res.status(200).send({ status: true, msg: getData })
     }
     catch (error) {
         res.status(400).send({ status: false, msg: error.message })
@@ -91,7 +85,7 @@ const deleteBlog = async function (req, res) {
             return res.status(400).send({ status: false, message: "no such user exists" })
         if (findData.isDeleted)
             return res.status(400).send({ status: false, msg: "Blog is already deleted" })
-        let deletedata = await blogModel.findOneAndUpdate({ _id: Blogid }, { $set: { isDeleted: true }, $setOnInsert: { deletedAt: new Date() } }, { new: true, upsert: true })
+        let deletedata = await blogModel.findOneAndUpdate({ _id: Blogid }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true, upsert: true })
         res.send({ status: true, msg: deletedata })
     }
     catch (error) {
@@ -106,15 +100,14 @@ const deleteBlogBy = async function (req, res) {
         let category = req.query.category
         let tag = req.query.tags
         let subcategory = req.query.subcategory
-        let findData = await blogModel.find({ isPublished: false, $or: [{ authorId: authorId },{ category: category }, { tags: tag }, { subcategory: subcategory }] })
-
-
-        if (findData.length===0)
-            return res.status(400).send({ status: false, message: "no such blog exists" })
-        if (findData.isDeleted)
+        let obj = { isPublished: false, $or: [{ authorId: authorId }, { category: category }, { tags: tag }, { subcategory: subcategory }] }
+        let updatedData = await blogModel.findOne(obj).collation({ locale: "en", strength: 2 })
+        if (!updatedData)
+            return res.status(400).send({ status: false, message: "no such user exists" })
+        if (updatedData.isDeleted)
             return res.status(400).send({ status: false, msg: "Blog is already deleted" })
-        let deletedata = await blogModel.findOneAndUpdate({ _id: Blogid }, { $set: { isDeleted: true }, $setOnInsert: { deletedAt: new Date() } }, { new: true, upsert: true })
-        res.send({ status: true, msg: deletedata })
+        let deletedData = await blogModel.findOneAndUpdate(obj, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true, upsert: true }).collation({ locale: "en", strength: 2 })
+        res.send({ status: true, msg: deletedData })
     }
     catch (error) {
         res.status(400).send({ status: false, msg: error.message })
@@ -126,4 +119,4 @@ module.exports.createBlog = createBlog;
 module.exports.getBlog = getBlog;
 module.exports.deleteBlog = deleteBlog;
 module.exports.deleteBlogBy = deleteBlogBy;
-module.exports.updateData=updateData;
+module.exports.updateData = updateData;
