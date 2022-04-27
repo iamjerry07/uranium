@@ -42,7 +42,13 @@ const getBlog = async function (req, res) {
         let category = req.query.category
         let tag = req.query.tags
         let subcategory = req.query.subcategory
+        
+        
         let getData = await blogModel.find({ isDeleted: false, isPublished: true, $or: [{ authorId: authorId },{ category: category }, { tags: tag }, { subcategory: subcategory }] })
+
+        if(!(authorId || category || tag ||subcategory))
+        getData = await blogModel.find({ isDeleted: false, isPublished: true})
+        
         if (getData.length===0)
             return res.status(404).send({ status: false, msg: "Blogs not present" })
         res.status(200).send({ status: true, msg: getData })
@@ -57,13 +63,35 @@ const getBlog = async function (req, res) {
 //5.
 const deleteBlog = async function (req, res) {
     try {
-        let Blogid = req.params
+        let Blogid = req.params.blogId
         let findData = await blogModel.findById(Blogid)
         if (!findData)
             return res.status(400).send({ status: false, message: "no such user exists" })
         if (findData.isDeleted)
             return res.status(400).send({ status: false, msg: "Blog is already deleted" })
-        let deletedata = await blogModel.findOneAndUpdate({ _id: Blogid }, { $set: { isDeleted: true }, $setOnInsert: { deletedAt: new Date() } }, { $new: true, upsert: true })
+        let deletedata = await blogModel.findOneAndUpdate({ _id: Blogid }, { $set: { isDeleted: true }, $setOnInsert: { deletedAt: new Date() } }, { new: true, upsert: true })
+        res.send({ status: true, msg: deletedata })
+    }
+    catch (error) {
+        res.status(400).send({ status: false, msg: error.message })
+    }
+}
+
+//6.
+const deleteBlogBy = async function (req, res) {
+    try {
+        let authorId = req.query.authorId
+        let category = req.query.category
+        let tag = req.query.tags
+        let subcategory = req.query.subcategory
+        let findData = await blogModel.find({ isPublished: false, $or: [{ authorId: authorId },{ category: category }, { tags: tag }, { subcategory: subcategory }] })
+
+
+        if (findData.length===0)
+            return res.status(400).send({ status: false, message: "no such blog exists" })
+        if (findData.isDeleted)
+            return res.status(400).send({ status: false, msg: "Blog is already deleted" })
+        let deletedata = await blogModel.findOneAndUpdate({ _id: Blogid }, { $set: { isDeleted: true }, $setOnInsert: { deletedAt: new Date() } }, { new: true, upsert: true })
         res.send({ status: true, msg: deletedata })
     }
     catch (error) {
@@ -75,3 +103,4 @@ module.exports.createAuthor = createAuthor;
 module.exports.createBlog = createBlog;
 module.exports.getBlog = getBlog;
 module.exports.deleteBlog = deleteBlog;
+module.exports.deleteBlogBy = deleteBlogBy;
