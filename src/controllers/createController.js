@@ -17,7 +17,24 @@ const createAuthor=async function(req,res){
 }
 
 
-//3.
 
+
+
+
+
+
+
+
+
+//3.
+const getBlog=async function(req,res){
+    try{
+    let getData=await blogModel.find();
+    }
+    catch(error){
+        res.status(400).send({msg:error.message})
+    }
+}
 
 module.exports.createAuthor=createAuthor;
+module.exports.getBlog=getBlog;

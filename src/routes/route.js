@@ -4,4 +4,6 @@ const controller = require("../controllers/createController");
 
 router.post("/authors", controller.createAuthor);
 
+router.get("/blogs", controller.getBlog);
+
 module.exports = router;
