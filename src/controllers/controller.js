@@ -59,9 +59,9 @@ const getBlog = async function (req, res) {
 const updateData = async function (req, res) {
     try {
         let Id = req.params.blogId
-        let query = req.body
-        let updateQuery = { title: query.title, category: query.category, isPublished: true, publishedAt: new Date() }
-        let addQuery = { tags: query.tags, subcategory: query.subcategory }
+        let bodyData = req.body
+        let updateQuery = { title: bodyData.title, category: bodyData.category, isPublished: true, publishedAt: new Date() }
+        let addQuery = { tags: bodyData.tags, subcategory: bodyData.subcategory }
         let blogId = await blogModel.findById(Id)
 
         if (!blogId)
@@ -69,7 +69,7 @@ const updateData = async function (req, res) {
         if (blogId.isDeleted)
             return res.status(404).send({ status: false, msg: "Blog is Deleted" })
 
-        let getData = await blogModel.findOneAndUpdate({ _id: Id }, { $set: updateQuery, $push: addQuery }, { multi: true, new: true, upsert: true }).collation({ locale: "en", strength: 2 })
+        let getData = await blogModel.findOneAndUpdate({ _id: Id }, { $set: updateQuery, $push: addQuery }, { multi: true, new: true, upsert: true })
         
         res.status(200).send({ status: true, msg: getData })
     }
