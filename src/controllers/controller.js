@@ -1,7 +1,7 @@
 const emailValidator = require("email-validator");
 const authorModel = require("../models/authorModel");
 const blogModel = require('../models/blogModel')
-
+const jwt = require("jsonwebtoken")
 
 //1. 
 const createAuthor = async function (req, res) {
@@ -70,7 +70,7 @@ const updateData = async function (req, res) {
             return res.status(404).send({ status: false, msg: "Blog is Deleted" })
 
         let getData = await blogModel.findOneAndUpdate({ _id: Id }, { $set: updateQuery, $push: addQuery }, { multi: true, new: true, upsert: true }).collation({ locale: "en", strength: 2 })
-        
+
         res.status(200).send({ status: true, msg: getData })
     }
     catch (error) {
@@ -113,4 +113,77 @@ const deleteBlogBy = async function (req, res) {
 }
 
 
-module.exports = { createAuthor, createBlog, getBlog, deleteBlog, deleteBlogBy, updateData }
+//7.
+const authorLogin = async function (req, res) {
+
+    try {
+        let email = req.body.email
+        let password = req.body.password
+
+        let author = await authorModel.findOne(req.body)
+
+        if (!author)
+
+            return res.status(404).send({ status: false, msg: "Invalid Usernme or Password" })
+
+        let token = jwt.sign({
+            email: author.email
+
+        },
+            "Project1"
+        )
+
+        res.status(200).send({ status: true, msg: token })
+    }
+    catch (error) {
+        res.status(500).send({ status: false, msg: error.message })
+    }
+}
+
+////"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpzbWl0aEBrbWFpbC5jb20iLCJpYXQiOjE2NTExNDI3MTR9.RlgBV4NWu5yJLqjoS5T3jK-yZsWO6HbpvAeM_LLK7qA"
+
+//8
+let middleware= async function(req,res,next){
+   try {
+    let token=req.headers["x-api-key"]
+   
+     let decodedToken=jwt.verify(token,"Project1");
+   
+     if(!decodedToken)
+   
+    return res.status(400).send({status:false,msg:"invalid Token"})
+   else{
+    req["decodedToken"]=decodedToken
+   }
+    next();
+}
+catch(err){
+ res.status(500).send({status:false,msg:err.message})   
+ 
+}
+
+}
+
+//9
+
+const middleware2 = async  function (req,res,next){
+  
+    let useremail=req.decodedToken.email
+    let blogId=req.params.blogId
+   
+   let authorData= await blogModel.findOne({_id:blogId}).select({authorId:1})
+ let abc=authorData.authorId.toString()
+ 
+   let email= await authorModel.findById(abc).select({email:1})
+ 
+  if(useremail != email.email )
+  return res.status(400).send({status: false, msg: 'Author logged is not allowed to modify the requested blog data'})
+   next();    
+}
+
+
+  
+
+
+
+module.exports = { createAuthor, createBlog, getBlog, deleteBlog, deleteBlogBy, updateData, authorLogin,middleware,middleware2 }
