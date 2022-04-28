@@ -61,7 +61,7 @@ const updateData = async function (req, res) {
         let Id = req.params.blogId
         let bodyData = req.body
         let updateQuery = { title: bodyData.title, category: bodyData.category, isPublished: true, publishedAt: new Date() }
-        let addQuery = { tags: bodyData.tags, subcategory: bodyData.subcategory }
+        let addQuery = { tags: bodyData.tags, body: bodyData.body }
         let blogId = await blogModel.findById(Id)
 
         if (!blogId)
@@ -69,7 +69,7 @@ const updateData = async function (req, res) {
         if (blogId.isDeleted)
             return res.status(404).send({ status: false, msg: "Blog is Deleted" })
 
-        let getData = await blogModel.findOneAndUpdate({ _id: Id }, { $set: updateQuery, $push: addQuery }, { multi: true, new: true, upsert: true })
+        let getData = await blogModel.findOneAndUpdate({ _id: Id }, { $set: updateQuery, $push: addQuery }, { new: true, upsert: true })
         
         res.status(200).send({ status: true, msg: getData })
     }
@@ -104,7 +104,7 @@ const deleteBlogBy = async function (req, res) {
         let findData = await blogModel.find(obj).collation({ locale: "en", strength: 2 })
         if (findData.length === 0)
             return res.status(404).send({ status: false, message: "no such blogs exists / the blogs you are looking for are already deleted or published" })
-        let deletedData = await blogModel.updateMany(obj, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true, upsert: true })
+        let deletedData = await blogModel.updateMany(obj, { $set: { isDeleted: true, deletedAt: new Date() } }, { upsert: true })
         res.status(200).send({ status: true, msg: deletedData })
     }
     catch (error) {
