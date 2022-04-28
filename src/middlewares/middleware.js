@@ -24,12 +24,9 @@ const authorisation = async function (req, res, next) {
     try {
         let useremail = req.decodedToken.email
         let blogId = req.params.blogId
-
         let authorData = await blogModel.findOne({ _id: blogId }).select({ authorId: 1 })
         let abc = authorData.authorId.toString()
-
         let email = await authorModel.findById(abc).select({ email: 1 })
-
         if (useremail != email.email)
             return res.status(401).send({ status: false, msg: 'Author logged is not allowed to modify the requested blog data' })
         next();

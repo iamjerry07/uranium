@@ -37,4 +37,4 @@ const authorLogin = async function (req, res) {
 
 // Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpzbWl0aEBrbWFpbC5jb20iLCJpYXQiOjE2NTExNDI3MTR9.RlgBV4NWu5yJLqjoS5T3jK-yZsWO6HbpvAeM_LLK7qA"
 
-module.exports={createAuthor,authorLogin}
+module.exports = { createAuthor, authorLogin }

@@ -1,6 +1,5 @@
 const authorModel = require("../models/authorModel");
 const blogModel = require('../models/blogModel')
-const jwt = require("jsonwebtoken")
 
 
 //2. Create a blog
