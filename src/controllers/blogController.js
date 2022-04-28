@@ -1,23 +1,9 @@
-const emailValidator = require("email-validator");
 const authorModel = require("../models/authorModel");
 const blogModel = require('../models/blogModel')
+const jwt = require("jsonwebtoken")
 
 
-//1. 
-const createAuthor = async function (req, res) {
-    try {
-        let data = req.body;
-        if (!(emailValidator.validate(data.email)))
-            return res.status(400).send({ status: false, msg: "Enter valid email id" })
-        const authorCreated = await authorModel.create(data);
-        res.status(201).send({ status: true, msg: authorCreated })
-    }
-    catch (error) {
-        res.status(500).send({ status: false, msg: error.message })
-    }
-}
-
-//2.
+//2. Create a blog
 const createBlog = async function (req, res) {
     try {
         let data = req.body
@@ -35,7 +21,7 @@ const createBlog = async function (req, res) {
 }
 
 
-//3.
+//3. Get all not deleted and published blogs which can also be filtered by query parameter/s.
 const getBlog = async function (req, res) {
     try {
         let query = req.query
@@ -55,7 +41,7 @@ const getBlog = async function (req, res) {
     }
 }
 
-//4.  update by title, body, adding tags, adding a subcategory
+//4. Update blog by changing its title, body, adding tags, adding a subcategory
 const updateData = async function (req, res) {
     try {
         let Id = req.params.blogId
@@ -70,7 +56,7 @@ const updateData = async function (req, res) {
             return res.status(404).send({ status: false, msg: "Blog is Deleted" })
 
         let getData = await blogModel.findOneAndUpdate({ _id: Id }, { $set: updateQuery, $push: addQuery }, { new: true, upsert: true })
-        
+
         res.status(200).send({ status: true, msg: getData })
     }
     catch (error) {
@@ -78,7 +64,7 @@ const updateData = async function (req, res) {
     }
 }
 
-//5.
+//5. Delete blog by blogId given as path parameter
 const deleteBlog = async function (req, res) {
     try {
         let Blogid = req.params.blogId
@@ -95,8 +81,8 @@ const deleteBlog = async function (req, res) {
     }
 }
 
-//6.
-const deleteBlogBy = async function (req, res) {
+//6. Delete blogs by query parameters
+const deleteBlogByQuery = async function (req, res) {
     try {
         let query = req.query
         let mainQuery = [{ authorId: query.authorId }, { category: query.category }, { tags: query.tags }, { subcategory: query.subcategory }]
@@ -113,4 +99,4 @@ const deleteBlogBy = async function (req, res) {
 }
 
 
-module.exports = { createAuthor, createBlog, getBlog, deleteBlog, deleteBlogBy, updateData }
+module.exports = { createBlog, getBlog, deleteBlog, deleteBlogByQuery, updateData }
