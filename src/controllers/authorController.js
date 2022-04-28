@@ -1,5 +1,6 @@
 const emailValidator = require("email-validator");
 const authorModel = require("../models/authorModel");
+const jwt = require("jsonwebtoken")
 
 //1. 
 const createAuthor = async function (req, res) {
@@ -22,7 +23,7 @@ const authorLogin = async function (req, res) {
         let loginDetail = req.body
         let author = await authorModel.findOne(loginDetail)
         if (!author)
-            return res.status(404).send({ status: false, msg: "Invalid Usernme or Password" })
+            return res.status(404).send({ status: false, msg: "Invalid email or Password" })
         let token = jwt.sign({
             email: author.email  //It is supposed to be done with _id attribute because of its unique nature but in this case email is also unique so I tried with it.
         },
