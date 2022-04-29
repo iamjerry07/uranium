@@ -1,5 +1,7 @@
 const authorModel = require("../models/authorModel");
 const blogModel = require('../models/blogModel')
+const mongoose=require("mongoose")
+const objectId =mongoose.Types.ObjectId
 
 
 //2. Create a blog
@@ -25,11 +27,29 @@ const getBlog = async function (req, res) {
     try {
         let query = req.query
         let mainQuery = [{ authorId: query.authorId }, { category: query.category }, { tags: query.tags }, { subcategory: query.subcategory }]
+
+        //when query has authorId, validate authorId
+        if(query.authorId && !(objectId.isValid(query.authorId))) 
+        return res.send({status:false, msg:"authorId is invalid"})
+        
         let obj = { isDeleted: false, isPublished: true, $or: mainQuery }
         let getData = await blogModel.find(obj).collation({ locale: "en", strength: 2 })
+        let keys = Object.keys(query)
+        let temp = 0;
 
-        if (!(query.authorId || query.category || query.tags || query.subcategory))
+        //when no query is given
+        if (keys.length === 0)
             getData = await blogModel.find({ isDeleted: false, isPublished: true })
+
+        //when query parametrs have attribute other than authorId,category,tags or subcategory
+        for (let i = 0; i < keys.length; i++) {
+            if (keys[i] == "authorId" || keys[i] == "category" || keys[i] == "tags" || keys[i] == "subcategory")
+                temp++;
+        }
+        if (keys.length > 0 && temp === 0)
+            return res.status(400).send({ status: false, msg: "Invalid Request!!" })
+
+        //no data found - matching filters
         if (getData.length === 0)
             return res.status(404).send({ status: false, msg: "Blogs not present" })
 
