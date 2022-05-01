@@ -54,8 +54,8 @@ const getBlog = async function (req, res) {
             if (keys[i] == "authorId" || keys[i] == "category" || keys[i] == "tags" || keys[i] == "subcategory")
                 temp++;
         }
-        if (keys.length > 0 && temp === 0)
-            return res.status(400).send({ status: false, msg: "Invalid Request!!" })
+        if (keys.length > 0 && temp !==keys.length)
+            return res.status(400).send({ status: false, msg: "Invalid Request!! Query cannot have attribute other than authorId, category, tags or subcategory" })
 
         //no data found - matching filters
         if (getData.length === 0)
@@ -88,8 +88,8 @@ const updateData = async function (req, res) {
             if (keys[i] == "title" || keys[i] == "body" || keys[i] == "tags" || keys[i] == "subcategory")
                 temp++;
         }
-        if (keys.length > 0 && temp === 0)
-            return res.status(400).send({ status: false, msg: "Invalid Updation Request!!" })
+        if (keys.length > 0 && temp !==keys.length)
+            return res.status(400).send({ status: false, msg: "Invalid Request!! Query cannot have attribute other than title, body, tags or subcategory" })
 
         if (!blogData)
             return res.status(404).send({ status: false, msg: "Blog not present" })
@@ -141,8 +141,8 @@ const deleteBlogByQuery = async function (req, res) {
             if (keys[i] == "authorId" || keys[i] == "category" || keys[i] == "tags" || keys[i] == "subcategory")
                 temp++;
         }
-        if (keys.length > 0 && temp === 0)
-            return res.status(400).send({ status: false, msg: "Invalid request!!" })
+        if (keys.length > 0 && temp !==keys.length)
+            return res.status(400).send({ status: false, msg: "Invalid Request!! Query cannot have attribute other than authorId, category, tags or subcategory" })
 
 
         let mainQuery = [{ authorId: query.authorId }, { category: query.category }, { tags: query.tags }, { subcategory: query.subcategory }]
