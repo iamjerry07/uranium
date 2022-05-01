@@ -34,7 +34,6 @@ const createBlog = async function (req, res) {
 const getBlog = async function (req, res) {
     try {
         let query = req.query
-        console.log(query)
         let mainQuery = [{ authorId: query.authorId }, { category: query.category }, { tags: query.tags }, { subcategory: query.subcategory }]
 
         //when query has authorId, validate authorId
@@ -43,7 +42,7 @@ const getBlog = async function (req, res) {
 
         let obj = { isDeleted: false, isPublished: true, $or: mainQuery }
         let getData = await blogModel.find(obj).collation({ locale: "en", strength: 2 })
-        let keys = Object.keys(query)
+        let keys = Object.keys(query) // array of keys 
         let temp = 0;
 
         //when no query is given
@@ -76,7 +75,7 @@ const updateData = async function (req, res) {
         let data = req.body
         let updateQuery = { title: data.title, body: data.body, isPublished: true, publishedAt: new Date() }
         let addQuery = { tags: data.tags, subcategory: data.subcategory }
-        let blogId = await blogModel.findById(id)
+        let blogData = await blogModel.findById(id)
         let keys = Object.keys(data)
         let temp = 0;
 
@@ -92,9 +91,9 @@ const updateData = async function (req, res) {
         if (keys.length > 0 && temp === 0)
             return res.status(400).send({ status: false, msg: "Invalid Updation Request!!" })
 
-        if (!blogId)
+        if (!blogData)
             return res.status(404).send({ status: false, msg: "Blog not present" })
-        if (blogId.isDeleted)
+        if (blogData.isDeleted)
             return res.status(404).send({ status: false, msg: "Blog is already Deleted" })
 
         let getData = await blogModel.findOneAndUpdate({ _id: id }, { $set: updateQuery, $push: addQuery }, { new: true, upsert: true })

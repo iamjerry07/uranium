@@ -46,7 +46,7 @@ const authorLogin = async function (req, res) {
         if (!author)
             return res.status(404).send({ status: false, msg: "Invalid email or Password" })
         let token = jwt.sign({
-            email: author.email  //It is supposed to be done with _id attribute because of its unique nature but in this case email is also unique so I tried with it.
+            authorId: author._id  
         },
             "Project1"
         )
@@ -55,8 +55,8 @@ const authorLogin = async function (req, res) {
     catch (error) {
         res.status(500).send({ status: false, msg: error.message })
     }
-}
+} 
 
-// Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpzbWl0aEBrbWFpbC5jb20iLCJpYXQiOjE2NTExNDI3MTR9.RlgBV4NWu5yJLqjoS5T3jK-yZsWO6HbpvAeM_LLK7qA"
+// Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JJZCI6IjYyNjg1NDhkZGRiNDM4NjU2YmMyYzQwYSIsImlhdCI6MTY1MTQwOTk2OH0.ZRmOGsIBxJYfYAUcMkAYz2snCPQRXJvWAFbszGAVYo8"
 
 module.exports = { createAuthor, authorLogin }

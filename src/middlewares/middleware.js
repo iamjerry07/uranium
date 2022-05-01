@@ -25,7 +25,7 @@ let authentication = async function (req, res, next) {
 //9
 const authorisation = async function (req, res, next) {
     try {
-        let useremail = req.decodedToken.email
+        let tokenAuthorId = req.decodedToken.authorId
         let blogId = req.params.blogId
 
         // validation for blogId 
@@ -34,11 +34,10 @@ const authorisation = async function (req, res, next) {
         
         let authorData = await blogModel.findOne({ _id: blogId }).select({ authorId: 1 })
         let authorId = authorData.authorId.toString()
-        let email = await authorModel.findById(authorId).select({ email: 1 })
-        if (useremail != email.email)
+        if (tokenAuthorId != authorId)
             return res.status(401).send({ status: false, msg: 'Author logged is not allowed to modify the requested blog data' })
         next();
-    }
+    } 
     catch (err) {
         res.status(500).send({ status: false, msg: err.message })
     }
