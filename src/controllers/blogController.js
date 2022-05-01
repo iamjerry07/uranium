@@ -38,7 +38,7 @@ const getBlog = async function (req, res) {
 
         //when query has authorId, validate authorId
         if (query.authorId && !(objectId.isValid(query.authorId)))
-            return res.status(400).send({ status: false, msg: "authorId is invalid" })
+            return res.status(400).send({ status: false, msg: "utahorId is invalid" })
 
         let obj = { isDeleted: false, isPublished: true, $or: mainQuery }
         let getData = await blogModel.find(obj).collation({ locale: "en", strength: 2 })
