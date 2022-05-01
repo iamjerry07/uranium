@@ -54,7 +54,7 @@ const getBlog = async function (req, res) {
             if (keys[i] == "authorId" || keys[i] == "category" || keys[i] == "tags" || keys[i] == "subcategory")
                 temp++;
         }
-        if (keys.length > 0 && temp !==keys.length)
+        if (keys.length > 0 && temp !== keys.length)
             return res.status(400).send({ status: false, msg: "Invalid Request!! Query cannot have attribute other than authorId, category, tags or subcategory" })
 
         //no data found - matching filters
@@ -88,7 +88,7 @@ const updateData = async function (req, res) {
             if (keys[i] == "title" || keys[i] == "body" || keys[i] == "tags" || keys[i] == "subcategory")
                 temp++;
         }
-        if (keys.length > 0 && temp !==keys.length)
+        if (keys.length > 0 && temp !== keys.length)
             return res.status(400).send({ status: false, msg: "Invalid Request!! Query cannot have attribute other than title, body, tags or subcategory" })
 
         if (!blogData)
@@ -141,16 +141,18 @@ const deleteBlogByQuery = async function (req, res) {
             if (keys[i] == "authorId" || keys[i] == "category" || keys[i] == "tags" || keys[i] == "subcategory")
                 temp++;
         }
-        if (keys.length > 0 && temp !==keys.length)
+        if (keys.length > 0 && temp !== keys.length)
             return res.status(400).send({ status: false, msg: "Invalid Request!! Query cannot have attribute other than authorId, category, tags or subcategory" })
 
 
         let mainQuery = [{ authorId: query.authorId }, { category: query.category }, { tags: query.tags }, { subcategory: query.subcategory }]
-        let obj = { isDeleted: false, isPublished: false, $or: mainQuery }
+        let obj = { isDeleted: false, isPublished: false, authorId: req.decodedToken.authorId, $or: mainQuery }
 
         let findData = await blogModel.find(obj).collation({ locale: "en", strength: 2 })
+
         if (findData.length === 0)
-            return res.status(404).send({ status: false, message: "no such blogs exists / the blogs you are looking are already deleted or published" })
+            return res.status(404).send({ status: false, message: "Blog is either published/ deleted/ doesn't exist, or Author is unauthorized" })
+ 
         let deletedData = await blogModel.updateMany(obj, { $set: { isDeleted: true, deletedAt: new Date() } }, { upsert: true })
         res.status(200).send({ status: true, msg: deletedData })
     }

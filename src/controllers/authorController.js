@@ -46,10 +46,10 @@ const authorLogin = async function (req, res) {
         if (!author)
             return res.status(404).send({ status: false, msg: "Invalid email or Password" })
         let token = jwt.sign({
-            authorId: author._id  
+            authorId: author._id.toString()
         },
             "Project1"
-        )
+        );
         res.status(200).send({ status: true, msg: token })
     }
     catch (error) {
