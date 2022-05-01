@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken")
 const authorModel = require("../models/authorModel");
 const blogModel = require('../models/blogModel')
+const mongoose = require("mongoose")
+const objectId = mongoose.Types.ObjectId
 
 //8
 let authentication = async function (req, res, next) {
@@ -9,7 +11,7 @@ let authentication = async function (req, res, next) {
         if (!token) return res.status(404).send({ status: false, msg: "token must be present" });
         let decodedToken = jwt.verify(token, "Project1");
         if (!decodedToken)
-            return res.status(400).send({ status: false, msg: "invalid Token" })
+            return res.status(400).send({ status: false, msg: "Invalid Token" })
         else {
             req["decodedToken"] = decodedToken
         }
@@ -25,6 +27,11 @@ const authorisation = async function (req, res, next) {
     try {
         let useremail = req.decodedToken.email
         let blogId = req.params.blogId
+
+        // validation for blogId 
+        if(!(objectId.isValid(blogId)))
+        return res.status(400).send({status:false,msg:"blogId is invalid"})
+        
         let authorData = await blogModel.findOne({ _id: blogId }).select({ authorId: 1 })
         let authorId = authorData.authorId.toString()
         let email = await authorModel.findById(authorId).select({ email: 1 })
